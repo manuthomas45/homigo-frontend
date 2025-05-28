@@ -1,0 +1,582 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+  }
+  
+  /* Styles for Login Page */
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 2rem;
+  }
+  
+  .logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .logo-highlight {
+    color: #6c5ce7;
+  }
+  
+  .technician-portal {
+    color: #6c5ce7;
+    font-size: 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+  
+  .technician-portal .arrow {
+    margin-left: 0.3rem;
+  }
+  
+  .technician-portal:hover {
+    text-decoration: underline;
+  }
+  
+  .login-box {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  
+  .login-box h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .login-box p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .form-group input:focus {
+    outline: none;
+    border-color: #6c5ce7;
+  }
+  
+  .options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .remember-me {
+    display: flex;
+    align-items: center;
+  }
+  
+  .remember-me input {
+    margin-right: 0.5rem;
+  }
+  
+  .remember-me label {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .forgot-password {
+    color: #6c5ce7;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+  
+  .forgot-password:hover {
+    text-decoration: underline;
+  }
+  
+  .login-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #6c5ce7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .login-btn:hover {
+    background-color: #5a4bc6;
+  }
+  
+  .divider {
+    position: relative;
+    margin: 1.5rem 0;
+  }
+  
+  .divider span {
+    background-color: #fff;
+    padding: 0 1rem;
+    color: #666;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #ccc;
+    z-index: 0;
+  }
+  
+  .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .google-btn img {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.5rem;
+  }
+  
+  .google-btn:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .signup-link {
+    margin-top: 1.5rem;
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .signup-link a {
+    color: #6c5ce7;
+    text-decoration: none;
+  }
+  
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Styles for Signup Page (retained) */
+  .signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
+  }
+  
+  /* Reused styles for Signup, Register, and Home */
+  .logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .logo-highlight {
+    color: #6c5ce7;
+  }
+  
+  .signup-box {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  
+  .signup-box h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .signup-box p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .terms {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .terms input {
+    margin-right: 0.5rem;
+  }
+  
+  .terms label {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .terms a {
+    color: #6c5ce7;
+    text-decoration: none;
+  }
+  
+  .terms a:hover {
+    text-decoration: underline;
+  }
+  
+  .signup-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #6c5ce7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .signup-btn:hover {
+    background-color: #5a4bc6;
+  }
+  
+  .divider {
+    position: relative;
+    margin: 1.5rem 0;
+  }
+  
+  .divider span {
+    background-color: #fff;
+    padding: 0 1rem;
+    color: #666;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #ccc;
+    z-index: 0;
+  }
+  
+  .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .google-btn img {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.5rem;
+  }
+  
+  .google-btn:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .login-link {
+    margin-top: 1.5rem;
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .login-link a {
+    color: #6c5ce7;
+    text-decoration: none;
+  }
+  
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Styles for Register and Home Pages (retained) */
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+  }
+  
+  .form-box {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+  }
+  
+  .form-box h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-group label {
+    display: block;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  }
+  
+  .error {
+    color: red;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  .link-text {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .link-text a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .link-text a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive Design (retained and updated for Login) */
+  @media (max-width: 768px) {
+    .login-container,
+    .signup-container,
+    .container {
+      padding: 1rem;
+    }
+  
+    .logo {
+      font-size: 2rem;
+    }
+  
+    .technician-portal {
+      font-size: 0.9rem;
+    }
+  
+    .login-box,
+    .signup-box,
+    .form-box {
+      padding: 1.5rem;
+      max-width: 350px;
+    }
+  
+    .login-box h2,
+    .signup-box h2,
+    .form-box h2 {
+      font-size: 1.25rem;
+    }
+  
+    .login-box p,
+    .signup-box p {
+      font-size: 0.9rem;
+    }
+  
+    .form-group input {
+      padding: 0.5rem;
+      font-size: 0.9rem;
+    }
+  
+    .login-btn,
+    .signup-btn,
+    .google-btn,
+    button {
+      padding: 0.5rem;
+      font-size: 0.9rem;
+    }
+  
+    .google-btn img {
+      width: 18px;
+      height: 18px;
+    }
+  
+    .remember-me label,
+    .terms label {
+      font-size: 0.8rem;
+    }
+  
+    .forgot-password {
+      font-size: 0.8rem;
+    }
+  
+    .divider span {
+      font-size: 0.8rem;
+    }
+  
+    .signup-link,
+    .login-link,
+    .link-text {
+      font-size: 0.8rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .login-container,
+    .signup-container,
+    .container {
+      padding: 0.5rem;
+    }
+  
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .technician-portal {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+    }
+  
+    .logo {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+  
+    .login-box,
+    .signup-box,
+    .form-box {
+      padding: 1rem;
+      max-width: 100%;
+    }
+  
+    .login-box h2,
+    .signup-box h2,
+    .form-box h2 {
+      font-size: 1.1rem;
+    }
+  
+    .login-box p,
+    .signup-box p {
+      font-size: 0.85rem;
+    }
+  
+    .form-group input {
+      padding: 0.4rem;
+      font-size: 0.85rem;
+    }
+  
+    .login-btn,
+    .signup-btn,
+    .google-btn,
+    button {
+      padding: 0.4rem;
+      font-size: 0.85rem;
+    }
+  
+    .google-btn img {
+      width: 16px;
+      height: 16px;
+    }
+  
+    .remember-me label,
+    .terms label {
+      font-size: 0.75rem;
+    }
+  
+    .forgot-password {
+      font-size: 0.75rem;
+    }
+  
+    .divider span {
+      font-size: 0.75rem;
+    }
+  
+    .signup-link,
+    .login-link,
+    .link-text {
+      font-size: 0.75rem;
+    }
+  }

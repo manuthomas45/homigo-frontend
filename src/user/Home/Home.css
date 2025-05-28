@@ -1,0 +1,297 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Home Container */
+.home-container {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+/* Hero Section */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #104ac7 0%, #57a8eb 100%);
+}
+
+.hero-content {
+  max-width: 50%;
+}
+
+.hero-content h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.cta-btn {
+  padding: 0.8rem 2rem;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.cta-btn:hover {
+  background-color: #0056b3;
+}
+
+.secondary-btn {
+  padding: 0.8rem 2rem;
+  background-color: transparent;
+  border: 1px solid #007bff;
+  color: #007bff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.secondary-btn:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.hero-image img {
+  max-width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Services Section */
+.services {
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: #fff;
+}
+
+.services h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.service-card {
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+}
+
+.service-card img {
+  max-width: 100%;
+  border-radius: 5px;
+}
+
+.service-card h3 {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* How It Works Section */
+.how-it-works {
+  padding: 4rem 2rem;
+  background-color: #f5f7fa;
+  text-align: center;
+}
+
+.how-it-works h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.step {
+  max-width: 250px;
+  text-align: center;
+}
+
+.step img {
+  margin-bottom: 1rem;
+}
+
+.step h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.step p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Trust and Security Section */
+.trust-security {
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: #fff;
+}
+
+.trust-security h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.trust-card {
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.trust-card h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.trust-card p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Footer */
+.footer {
+  padding: 2rem;
+  background-color: #333;
+  color: #fff;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 200px;
+}
+
+.footer-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.footer-section p {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.footer-link {
+  display: block;
+  color: #ccc;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #007bff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  .hero-image {
+    max-width: 100%;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
+  .cta-btn,
+  .secondary-btn {
+    padding: 0.6rem 1.5rem;
+  }
+
+  .services-grid,
+  .trust-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .step {
+    max-width: 100%;
+  }
+}

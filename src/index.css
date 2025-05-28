@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* 
+.Toastify__toast {
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  border-radius: 5px;
+}
+
+.Toastify__toast--success {
+  background-color: #007bff !important; 
+}
+
+.Toastify__toast--error {
+  background-color: #dc3545 !important; 
+}
+
+.Toastify__close-button {
+  color: #fff;
+} */
+
+/* Fix close button alignment *//* ✅ Keep the close button inside the toast box */
+.Toastify__close-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: transparent !important;
+  color: #000 !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  z-index: 1;
+}
+
+/* ✅ Fix hover background (remove blue) */
+.Toastify__close-button:hover,
+.Toastify__close-button:focus {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
