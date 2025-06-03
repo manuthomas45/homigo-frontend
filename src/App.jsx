@@ -9,6 +9,9 @@ import Register from './user/singup/Signup';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminDashboard from './admin/AdminDashboard'
 import Profile from './user/Profile/Profile';
+import ResetPassword from './user/ResetPassword';
+import ForgotPassword from './user/ForgotPassword';
+
 function App() {
   const dispatch = useDispatch();
 
@@ -32,32 +35,13 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Protected Routes */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute allowedRole="user">
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute allowedRole="admin">
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
+        <Route path="/" element={<ProtectedRoute allowedRole="user">  <Home />  </ProtectedRoute>} />
+        <Route path="/admin" element={ <ProtectedRoute allowedRole="admin"> <AdminDashboard /> </ProtectedRoute>  } />
+        <Route path="/profile" element={<ProtectedRoute> <Profile /></ProtectedRoute>}/>
         {/* Redirect unknown routes to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

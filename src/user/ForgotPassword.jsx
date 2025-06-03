@@ -1,22 +1,48 @@
 import { useState } from 'react';
-import { Mail, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Mail, ArrowLeft } from 'lucide-react';
+import api from '../api'; 
 
-export default function ResetPassword() {
+export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email) return;
-    
+
+    // Validate email
+    if (!email) {
+      setError('Email is required');
+      return;
+    }
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    setError('');
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    try {
+      const response = await api.post('/users/forgot-password/', { email });
       setIsLoading(false);
       setIsSubmitted(true);
-    }, 1500);
+      toast.success(response.data.message);
+    } catch (err) {
+      setIsLoading(false);
+      const errorMessage = err.response?.data?.email || 'Failed to send reset email. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    }
   };
 
   if (isSubmitted) {
@@ -78,10 +104,15 @@ export default function ResetPassword() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="w-full px-4 py-3 pl-11 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder-gray-500"
+                  className={`w-full px-4 py-3 pl-11 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder-gray-500 ${
+                    error ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  }`}
                 />
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               </div>
+              {error && (
+                <p className="mt-1 text-sm text-red-600">{error}</p>
+              )}
             </div>
 
             <button
@@ -101,7 +132,10 @@ export default function ResetPassword() {
           </div>
 
           <div className="mt-6 text-center">
-            <button className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
+            <button
+              onClick={() => navigate('/login')}
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
+            >
               Back to Login
             </button>
           </div>

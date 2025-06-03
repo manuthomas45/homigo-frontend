@@ -6,7 +6,7 @@ import { GoogleLogin, googleLogout } from '@react-oauth/google';
 import api from '../../api'; // Use api.js instead of axios
 import { setUser } from '../../store/userSlice';
 import './Signin.css';
-
+import { Link } from 'react-router-dom'
 
 const Login = () => {
   const navigate = useNavigate();
@@ -125,17 +125,19 @@ const Login = () => {
             />
           </div>
           <div className="options">
-            <div className="remember-me">
-              {/* <input
-                type="checkbox"
-                id="remember-me"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              /> */}
-              {/* <label htmlFor="remember-me">Remember me?</label> */}
-            </div>
-            <a href="#" className="forgot-password">Forgot Password?</a>
+          <div className="remember-me">
+            {/* <input
+              type="checkbox"
+              id="remember-me"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            /> */}
+            {/* <label htmlFor="remember-me">Remember me?</label> */}
           </div>
+          <Link to="/forgot-password" className="forgot-password">
+              Forgot Password?
+            </Link>         
+            </div>
           <button type="submit" className="login-btn">Sign In</button>
         </form>
         <div className="divider">

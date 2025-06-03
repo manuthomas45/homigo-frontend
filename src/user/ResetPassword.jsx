@@ -1,14 +1,30 @@
-import { useState } from 'react';
-import { Eye, EyeOff, Lock, CheckCircle, ArrowLeft, Shield } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom'; // Add useLocation
+import { toast } from 'react-toastify'; // Add toast for error/success messages
+import { Lock, CheckCircle, ArrowLeft, Shield } from 'lucide-react';
+import api from '../api'; // Import your API client
 
 export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [errors, setErrors] = useState({});
+  const [token, setToken] = useState(''); // Add state for token
+  const navigate = useNavigate();
+  const location = useLocation(); // Use location to get query params
+
+  // Extract token from URL on component mount
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const tokenParam = searchParams.get('token');
+    if (!tokenParam) {
+      toast.error('Invalid reset link');
+      navigate('/forgot-password');
+    } else {
+      setToken(tokenParam);
+    }
+  }, [location, navigate]);
 
   const validatePassword = (password) => {
     const errors = [];
@@ -42,23 +58,47 @@ export default function ResetPassword() {
     if (Object.keys(newErrors).length === 0) {
       setIsLoading(true);
       
-      // Simulate API call
-      setTimeout(() => {
+      try {
+        // Make API call to reset password
+        const response = await api.post('/users/reset-password/', {
+          token,
+          new_password: newPassword,
+        });
         setIsLoading(false);
         setIsUpdated(true);
-      }, 1500);
+        toast.success(response.data.message);
+        // Clear any stored tokens (if applicable)
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+      } catch (err) {
+        setIsLoading(false);
+        const errorMessage = err.response?.data?.detail || 'Failed to reset password. Please try again.';
+        setErrors({ general: errorMessage });
+        toast.error(errorMessage);
+      }
     }
   };
 
   const passwordStrength = () => {
     const errors = validatePassword(newPassword);
     const strength = 4 - errors.length;
+    const colors = {
+      0: { bar: 'bg-red-500', text: 'text-red-600' },
+      1: { bar: 'bg-orange-500', text: 'text-orange-600' },
+      2: { bar: 'bg-yellow-500', text: 'text-yellow-600' },
+      3: { bar: 'bg-green-500', text: 'text-green-600' },
+      4: { bar: 'bg-green-500', text: 'text-green-600' }
+    };
     return {
       score: strength,
       label: ['Weak', 'Fair', 'Good', 'Strong'][strength] || 'Weak',
-      color: ['red', 'orange', 'yellow', 'green'][strength] || 'red'
+      colors: colors[strength] || colors[0]
     };
   };
+
+  if (!token) {
+    return null; // Render nothing until token is validated
+  }
 
   if (isUpdated) {
     return (
@@ -73,7 +113,7 @@ export default function ResetPassword() {
               Your password has been successfully updated. You can now login with your new password.
             </p>
             <button
-              onClick={() => window.location.href = '/login'}
+              onClick={() => navigate('/login')} // Use navigate instead of window.location
               className="w-full bg-green-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-green-700 transition-colors duration-200"
             >
               Continue to Login
@@ -104,7 +144,7 @@ export default function ResetPassword() {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Reset Password</h2>
             <p className="text-gray-600 text-sm">
-              Enter your email address and we'll send you an email with instructions to reset your password
+              Enter your new password to reset your account
             </p>
           </div>
 
@@ -117,22 +157,15 @@ export default function ResetPassword() {
               <div className="relative">
                 <input
                   id="newPassword"
-                  type={showNewPassword ? 'text' : 'password'}
+                  type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className={`w-full px-4 py-3 pl-11 pr-11 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder-gray-400 ${
+                  className={`w-full px-4 py-3 pl-11 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder-gray-400 ${
                     errors.newPassword ? 'border-red-300 bg-red-50' : 'border-gray-300'
                   }`}
                 />
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <button
-                  type="button"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
               </div>
               {errors.newPassword && (
                 <p className="mt-1 text-sm text-red-600">{errors.newPassword}</p>
@@ -141,11 +174,11 @@ export default function ResetPassword() {
                 <div className="mt-2">
                   <div className="flex items-center justify-between text-xs mb-1">
                     <span className="text-gray-600">Password strength</span>
-                    <span className={`font-medium text-${strength.color}-600`}>{strength.label}</span>
+                    <span className={`font-medium ${strength.colors.text}`}>{strength.label}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-1.5">
                     <div 
-                      className={`h-1.5 rounded-full bg-${strength.color}-500 transition-all duration-300`}
+                      className={`h-1.5 rounded-full ${strength.colors.bar} transition-all duration-300`}
                       style={{ width: `${(strength.score / 4) * 100}%` }}
                     ></div>
                   </div>
@@ -161,22 +194,15 @@ export default function ResetPassword() {
               <div className="relative">
                 <input
                   id="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className={`w-full px-4 py-3 pl-11 pr-11 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder-gray-400 ${
+                  className={`w-full px-4 py-3 pl-11 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder-gray-400 ${
                     errors.confirmPassword ? 'border-red-300 bg-red-50' : 'border-gray-300'
                   }`}
                 />
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
               </div>
               {errors.confirmPassword && (
                 <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
@@ -212,6 +238,11 @@ export default function ResetPassword() {
               </ul>
             </div>
 
+            {/* Display general errors (e.g., token expired) */}
+            {errors.general && (
+              <p className="text-sm text-red-600 text-center">{errors.general}</p>
+            )}
+
             <button
               onClick={handleSubmit}
               disabled={isLoading || !newPassword || !confirmPassword}
@@ -229,7 +260,10 @@ export default function ResetPassword() {
           </div>
 
           <div className="mt-6 text-center">
-            <button className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200 flex items-center justify-center gap-1 mx-auto">
+            <button
+              onClick={() => navigate('/login')} // Use navigate instead of window.location
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200 flex items-center justify-center gap-1 mx-auto"
+            >
               <ArrowLeft className="w-4 h-4" />
               Back to Login
             </button>
