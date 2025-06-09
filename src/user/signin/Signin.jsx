@@ -40,7 +40,11 @@ const Login = () => {
         // Navigate based on role
         if (user.role === 'admin') {
           navigate('/admin');
-        } else {
+        }
+        else if (user.role==='technician'){
+          navigate('/technician-home');
+        }
+         else {
           navigate('/');
         }
       }
@@ -97,10 +101,10 @@ const Login = () => {
         <h1 className="logo">
           Homi<span className="logo-highlight">Go</span>
         </h1>
-        <a href="#" className="technician-portal">
+        <Link to="/technician-login" className="technician-portal">
           Technician Portal
           <span className="arrow">→</span>
-        </a>
+        </Link>
       </div>
       <div className="login-box">
         <h2>Sign In</h2>

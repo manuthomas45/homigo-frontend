@@ -11,6 +11,12 @@ import AdminDashboard from './admin/AdminDashboard'
 import Profile from './user/Profile/Profile';
 import ResetPassword from './user/ResetPassword';
 import ForgotPassword from './user/ForgotPassword';
+import 'leaflet/dist/leaflet.css';
+// import TechnicianLogin from './technician/TechnicianLogin';
+import TechnicianRegister from './technician/TechnicianRegister';
+import TechnicianHome from './technician/TechnicianHome';
+
+
 
 function App() {
   const dispatch = useDispatch();
@@ -32,18 +38,28 @@ function App() {
     <Router>
       <Routes>
         {/* Public Routes */}
+        <Route path="/" element={ <Home />}/>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Protected Routes */}
-        <Route path="/" element={<ProtectedRoute allowedRole="user">  <Home />  </ProtectedRoute>} />
+        {/* admin Routes */}
         <Route path="/admin" element={ <ProtectedRoute allowedRole="admin"> <AdminDashboard /> </ProtectedRoute>  } />
-        <Route path="/profile" element={<ProtectedRoute> <Profile /></ProtectedRoute>}/>
+
+
+        {/* user Routes */}
+        <Route path="/profile" element={<ProtectedRoute allowedRole="user"> <Profile /></ProtectedRoute>}/>
+
+
+        {/* technician routes */}
+        <Route path="/technician-register" element={<ProtectedRoute allowedRole="user"> <TechnicianRegister /></ProtectedRoute>} />
+        <Route path="/technician-home" element={<ProtectedRoute allowedRole="technician"> <TechnicianHome /></ProtectedRoute>} />
+
         {/* Redirect unknown routes to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
+
       </Routes>
     </Router>
   );

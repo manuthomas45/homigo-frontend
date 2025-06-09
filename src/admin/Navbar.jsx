@@ -67,7 +67,7 @@ const NavbarSidebar = () => {
             <ul className="space-y-1 px-3">
               <SidebarItem icon={<LayoutDashboard size={18} />} text="Dashboard" active />
               <SidebarItem icon={<Briefcase size={18} />} text="Services" />
-              <SidebarItem icon={<UserHardHat size={18} />} text="Architects" />
+              <SidebarItem icon={<UserHardHat size={18} />} text="Technicians" />
               <SidebarItem icon={<Users size={18} />} text="Customers" />
               <SidebarItem icon={<CheckSquare size={18} />} text="Tasks" />
               <SidebarItem icon={<Inbox size={18} />} text="Inbox" />

@@ -8,20 +8,23 @@
 
 /* Home Container */
 .home-container {
+  padding-top: 30px;
   min-height: 100vh;
   background-color: #f5f7fa;
 }
 
 /* Hero Section */
 .hero {
+  
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 4rem 2rem;
-  background: linear-gradient(135deg, #104ac7 0%, #57a8eb 100%);
+  background: linear-gradient(135deg, #57a8eb 100%, #57a8eb 100%);
 }
 
 .hero-content {
+  
   max-width: 50%;
 }
 

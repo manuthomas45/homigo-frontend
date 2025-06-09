@@ -3,8 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import api from '../../api';
 import { setUser } from '../../store/userSlice';
+import Navbar from '../Home/Navbar';
 
 const Profile = () => {
+  
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const [profilePicture, setProfilePicture] = useState(null);
@@ -91,7 +93,8 @@ const Profile = () => {
     }
   };
 
-  return (
+  return (<>
+    <Navbar/>
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">Your Profile</h2>
@@ -206,6 +209,7 @@ const Profile = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

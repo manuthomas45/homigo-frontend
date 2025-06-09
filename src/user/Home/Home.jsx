@@ -7,10 +7,10 @@ const Home = () => {
   const user = useSelector((state) => state.user.user);
 
 
-  return (
+  return (<><Navbar />
     <div className="home-container">
       
-      <Navbar />
+      
 
       {/* Hero Section */}
     
@@ -130,6 +130,7 @@ const Home = () => {
         </div>
       </footer>
     </div>
+    </>
   );
 };
 
