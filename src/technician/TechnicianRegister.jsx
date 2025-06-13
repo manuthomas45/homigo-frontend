@@ -6,6 +6,7 @@ import { setUser } from '../store/userSlice';
 import api from '../api';
 import Navbar from '../user/Home/Navbar';
 
+
 const TechnicianRegister = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();

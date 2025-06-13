@@ -12,21 +12,13 @@ const ProtectedRoute = ({ children, allowedRole }) => {
   console.log('ProtectedRoute - UserRole:', userRole);
   console.log('ProtectedRoute - Current Path:', location.pathname);
 
+  // If not authenticated, redirect to login
   if (!isAuthenticated) {
     console.log('ProtectedRoute - Redirecting to /login because user is not authenticated');
     return <Navigate to="/login" replace />;
   }
 
-  if (userRole === 'admin' && location.pathname !== '/admin') {
-    console.log('ProtectedRoute - Redirecting admin to /admin');
-    return <Navigate to="/admin" replace />;
-  }
-
-  if (allowedRole === 'admin' && userRole !== 'admin') {
-    console.log('ProtectedRoute - Redirecting non-admin to /');
-    return <Navigate to="/" replace />;
-  }
-
+  // Role-based access control
   if (allowedRole && userRole !== allowedRole) {
     console.log(`ProtectedRoute - Redirecting to / because role (${userRole}) does not match allowedRole (${allowedRole})`);
     return <Navigate to="/" replace />;

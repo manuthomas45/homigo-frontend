@@ -23,8 +23,16 @@ const Register = () => {
 
   // Validation schema using Yup
   const validationSchema = Yup.object({
-    firstName: Yup.string().trim().required('First name is required'),
-    lastName: Yup.string().trim().required('Last name is required'),
+    firstName: Yup.string()
+      .trim()
+      .required('First name is required')
+      .min(2, 'First name must be at least 2 characters long')
+      .matches(/^[A-Za-z]+$/, 'First name must contain only letters'),
+    lastName: Yup.string()
+      .trim()
+      .required('Last name is required')
+      .min(2, 'Last name must be at least 2 characters long')
+      .matches(/^[A-Za-z]+$/, 'Last name must contain only letters'),
     email: Yup.string()
       .trim()
       .email('Invalid email format')

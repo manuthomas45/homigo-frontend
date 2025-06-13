@@ -14,13 +14,42 @@ import {
   Menu,
   X,
 } from "lucide-react"
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { clearUser } from "../store/userSlice";
+import api from "../api";
+import { toast } from 'react-toastify';
 
 const NavbarSidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen)
-  }
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      // Call the logout API endpoint
+      await api.post('users/logout/', {});
+      // Clear access token from localStorage
+      localStorage.removeItem('access_token');
+      // Clear user state in Redux
+      dispatch(clearUser());
+      // Show success message
+      toast.success('Logged out successfully');
+      // Redirect to login page
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout Error:', error.response?.data || error.message);
+      // Even if the API call fails, clear client-side data and redirect
+      localStorage.removeItem('access_token');
+      dispatch(clearUser());
+      toast.error('An error occurred while logging out');
+      navigate('/login');
+    }
+  };
 
   return (
     <>
@@ -43,7 +72,7 @@ const NavbarSidebar = () => {
               <p className="text-xs text-gray-500">Admin</p>
             </div>
           </div>
-          <button className="text-gray-500 hover:text-gray-700">
+          <button className="text-gray-500 hover:text-gray-700" onClick={handleLogout}>
             <LogOut size={20} />
           </button>
         </div>
@@ -65,18 +94,18 @@ const NavbarSidebar = () => {
         <div className="flex flex-col h-full">
           <div className="flex-1 py-24">
             <ul className="space-y-1 px-3">
-              <SidebarItem icon={<LayoutDashboard size={18} />} text="Dashboard" active />
-              <SidebarItem icon={<Briefcase size={18} />} text="Services" />
-              <SidebarItem icon={<UserHardHat size={18} />} text="Technicians" />
-              <SidebarItem icon={<Users size={18} />} text="Customers" />
-              <SidebarItem icon={<CheckSquare size={18} />} text="Tasks" />
-              <SidebarItem icon={<Inbox size={18} />} text="Inbox" />
-              <SidebarItem icon={<Wallet size={18} />} text="Wallet" />
-              <SidebarItem icon={<BarChart3 size={18} />} text="Reports" />
+              <SidebarItem icon={<LayoutDashboard size={18} />} text="Dashboard" to="/admin" />
+              <SidebarItem icon={<Briefcase size={18} />} text="Services" to="/admin/services" />
+              <SidebarItem icon={<UserHardHat size={18} />} text="Technicians" to="/admin/technicians" />
+              <SidebarItem icon={<Users size={18} />} text="Customers" to="/admin/customers" active />
+              <SidebarItem icon={<CheckSquare size={18} />} text="Tasks" to="/admin/tasks" />
+              <SidebarItem icon={<Inbox size={18} />} text="Inbox" to="/admin/inbox" />
+              <SidebarItem icon={<Wallet size={18} />} text="Wallet" to="/admin/wallet" />
+              <SidebarItem icon={<BarChart3 size={18} />} text="Reports" to="/admin/reports" />
             </ul>
           </div>
           <div className="p-4 border-t border-gray-200">
-            <button className="flex items-center text-gray-700 hover:text-gray-900">
+            <button className="flex items-center text-gray-700 hover:text-gray-900" onClick={handleLogout}>
               <LogOut size={18} className="mr-2" />
               <span>Logout</span>
             </button>
@@ -93,14 +122,14 @@ const NavbarSidebar = () => {
         />
       )}
     </>
-  )
-}
+  );
+};
 
-const SidebarItem = ({ icon, text, active }) => {
+const SidebarItem = ({ icon, text, to, active }) => {
   return (
     <li>
-      <a
-        href="#"
+      <Link
+        to={to}
         className={`
           flex items-center px-3 py-2 rounded-md text-sm
           ${active ? "bg-purple-100 text-purple-700 font-medium" : "text-gray-700 hover:bg-gray-100"}
@@ -108,9 +137,9 @@ const SidebarItem = ({ icon, text, active }) => {
       >
         <span className="mr-2">{icon}</span>
         <span>{text}</span>
-      </a>
+      </Link>
     </li>
-  )
-}
+  );
+};
 
-export default NavbarSidebar
+export default NavbarSidebar;

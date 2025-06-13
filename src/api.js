@@ -1,7 +1,7 @@
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 const api = axios.create({
-  baseURL: 'http://localhost:8000/',
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
@@ -24,11 +24,12 @@ const processQueue = (error, token = null) => {
 api.interceptors.request.use(
   (config) => {
     if (
-      config.url.includes('/users/register/') ||
-      config.url.includes('/users/verify-otp/') ||
-      config.url.includes('/users/resend-otp/') ||
-      config.url.includes('/users/login/')
+      config.url.includes('users/register/') ||
+      config.url.includes('users/verify-otp/') ||
+      config.url.includes('users/resend-otp/') ||
+      config.url.includes('api/v1/users/login/')
     ) {
+      delete config.headers.Authorization;
       return config;
     }
 
@@ -60,18 +61,18 @@ api.interceptors.response.use(
     }
 
     const originalRequest = error.config;
-    console.log(originalRequest);
-    
+    console.log('Original Request:', originalRequest);
 
+    
     if (
-      originalRequest.url.includes('/users/register/') ||
-      originalRequest.url.includes('/users/verify-otp/') ||
-      originalRequest.url.includes('/users/resend-otp/') ||
-      originalRequest.url.includes('/users/login/')
+      originalRequest.url.includes('users/register/') ||
+      originalRequest.url.includes('users/verify-otp/') ||
+      originalRequest.url.includes('users/resend-otp/') ||
+      originalRequest.url.includes('users/login/')
     ) {
       return Promise.reject(error);
     }
-
+    console.log("refreshing")
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -90,8 +91,13 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await axios.post('http://localhost:8000/refresh-token/', {}, { withCredentials: true });
-        const newAccessToken = response.data.access_token;
+        const refreshResponse = await axios.post(
+          `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/../../refresh-token/`,
+          {},
+          { withCredentials: true }
+        );
+        const newAccessToken = refreshResponse.data.access_token;
+        console.log('New Access Token:', newAccessToken);
 
         localStorage.setItem('access_token', newAccessToken);
         processQueue(null, newAccessToken);
@@ -99,17 +105,23 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError);
+        console.error('Token refresh failed:', refreshError.response?.data || refreshError.message);
         try {
-          await axios.post('http://localhost:8000/users/logout/', {}, { withCredentials: true });
+          await axios.post(
+            `${import.meta.env.VITE_API_URL}users/logout/`,
+            {},
+            { withCredentials: true }
+          );
         } catch (logoutError) {
-          console.error('Logout failed:', logoutError);
+          console.error('Logout failed:', logoutError.response?.data || logoutError.message);
         }
         localStorage.removeItem('access_token');
         const refreshFailedEvent = new Event('token-refresh-failed');
         window.dispatchEvent(refreshFailedEvent);
         processQueue(refreshError);
-        window.location.href = '/login';
+        if (!originalRequest.url.includes('/users/login/')) {
+          window.location.href = '/login';
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
