@@ -19,6 +19,9 @@ import TechnicianProfile from './technician/TechnicianProfile'; // Import the ne
 import Customers from './admin/customers';
 import Technicians from './admin/Technicians';
 import Services from './admin/Services';
+import ServiceTypes from './admin/SeviceType';
+import ServicePage from './user/servicePage';
+import BookingPage from './user/BookingPage';
 
 function App() {
   const dispatch = useDispatch();
@@ -45,12 +48,15 @@ function App() {
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/services" element={<ServicePage/>}/>
+        <Route path="/booking" element={<BookingPage/>} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute allowedRole="admin"><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/customers" element={<ProtectedRoute allowedRole="admin"><Customers /></ProtectedRoute>} />
         <Route path="/admin/technicians" element={<ProtectedRoute allowedRole="admin"><Technicians /></ProtectedRoute>} />
         <Route path="/admin/services" element={<ProtectedRoute allowedRole="admin"><Services /></ProtectedRoute>} />
+        <Route path="/admin/service-types" element={<ProtectedRoute allowedRole="admin"><ServiceTypes /></ProtectedRoute>} />
 
         {/* User Routes */}
         <Route path="/profile" element={<ProtectedRoute allowedRole="user"><Profile /></ProtectedRoute>} />

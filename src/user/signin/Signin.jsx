@@ -13,10 +13,12 @@ const Login = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // Spinner state
 
   // Handle email/password login
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Show loader
     try {
       const response = await api.post('users/login/', {
         email,
@@ -25,18 +27,24 @@ const Login = () => {
 
       if (response.status === 200) {
         const { user } = response.data;
+        console.log(user)
         const accessToken = response.data.access_token;
 
-        // Store access token in localStorage
         localStorage.setItem('access_token', accessToken);
 
-        // Store user details in Redux
         dispatch(setUser({
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
+          phoneNumber: user.phoneNumber,
+          profilePicture: user.profilePicture,
           role: user.role,
+          isVerified: user.isVerified,
+          status: user.status,
         }));
 
-        // Navigate based on role
+
         if (user.role === 'admin') {
           navigate('/admin');
         } else if (user.role === 'technician') {
@@ -54,10 +62,11 @@ const Login = () => {
       } else {
         toast.error(errorMessage, { autoClose: 5000 });
       }
+    } finally {
+      setLoading(false); // Hide loader
     }
   };
 
-  // Handle Google login success
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
       const response = await api.post('users/google-auth/', {
@@ -89,7 +98,6 @@ const Login = () => {
     }
   };
 
-  // Handle Google login failure
   const handleGoogleLoginFailure = () => {
     toast.error('Google login failed', { autoClose: 5000 });
   };
@@ -100,10 +108,6 @@ const Login = () => {
         <h1 className="logo">
           Homi<span className="logo-highlight">Go</span>
         </h1>
-        {/* <Link to="/technician-login" className="technician-portal">
-          Technician Portal
-          <span className="arrow">→</span>
-        </Link> */}
       </div>
       <div className="login-box">
         <h2>Sign In</h2>
@@ -128,20 +132,42 @@ const Login = () => {
             />
           </div>
           <div className="options">
-            <div className="remember-me">
-              {/* <input
-                type="checkbox"
-                id="remember-me"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              /> */}
-              {/* <label htmlFor="remember-me">Remember me?</label> */}
-            </div>
             <Link to="/forgot-password" className="forgot-password">
               Forgot Password?
             </Link>
           </div>
-          <button type="submit" className="login-btn">Sign In</button>
+          <button
+            type="submit"
+            className="login-btn flex items-center justify-center gap-2"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <svg
+                  className="w-5 h-5 text-white animate-spin"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+                  ></path>
+                </svg>
+                Signing In...
+              </>
+            ) : (
+              'Sign In'
+            )}
+          </button>
         </form>
         <div className="divider">
           <span>or sign in with other accounts?</span>

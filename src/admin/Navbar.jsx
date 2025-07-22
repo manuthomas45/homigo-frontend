@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { FaWrench } from 'react-icons/fa';
 import {
   LayoutDashboard,
   Briefcase,
@@ -95,9 +96,10 @@ const NavbarSidebar = () => {
           <div className="flex-1 py-24">
             <ul className="space-y-1 px-3">
               <SidebarItem icon={<LayoutDashboard size={18} />} text="Dashboard" to="/admin" />
-              <SidebarItem icon={<Briefcase size={18} />} text="Services" to="/admin/services" />
+              <SidebarItem icon={<Briefcase size={18} />} text="Category" to="/admin/services" />
               <SidebarItem icon={<UserHardHat size={18} />} text="Technicians" to="/admin/technicians" />
-              <SidebarItem icon={<Users size={18} />} text="Customers" to="/admin/customers" active />
+              <SidebarItem icon={<Users size={18} />} text="Customers" to="/admin/customers" />
+              <SidebarItem icon={<FaWrench size={18} />} text="Services" to="/admin/service-types" />
               <SidebarItem icon={<CheckSquare size={18} />} text="Tasks" to="/admin/tasks" />
               <SidebarItem icon={<Inbox size={18} />} text="Inbox" to="/admin/inbox" />
               <SidebarItem icon={<Wallet size={18} />} text="Wallet" to="/admin/wallet" />

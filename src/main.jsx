@@ -8,6 +8,7 @@ import store, { persistor } from './store';
 import { PersistGate } from 'redux-persist/integration/react'; 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './index.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 createRoot(document.getElementById('root')).render(
