@@ -22,6 +22,7 @@ import Services from './admin/Services';
 import ServiceTypes from './admin/SeviceType';
 import ServicePage from './user/servicePage';
 import BookingPage from './user/BookingPage';
+import BookingSuccess from './user/BookingSucess';
 
 function App() {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/services" element={<ServicePage/>}/>
         <Route path="/booking" element={<BookingPage/>} />
+        <Route path="/booking-success" element={<BookingSuccess />} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute allowedRole="admin"><AdminDashboard /></ProtectedRoute>} />

@@ -61,7 +61,6 @@ api.interceptors.response.use(
     }
 
     const originalRequest = error.config;
-    console.log('Original Request:', originalRequest);
 
     
     if (
