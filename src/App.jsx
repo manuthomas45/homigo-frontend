@@ -23,6 +23,8 @@ import ServiceTypes from './admin/SeviceType';
 import ServicePage from './user/servicePage';
 import BookingPage from './user/BookingPage';
 import BookingSuccess from './user/BookingSucess';
+import Bookings from './admin/Bookings';
+import TechnicianBookings from './technician/TechnicianBooking';
 
 function App() {
   const dispatch = useDispatch();
@@ -59,6 +61,7 @@ function App() {
         <Route path="/admin/technicians" element={<ProtectedRoute allowedRole="admin"><Technicians /></ProtectedRoute>} />
         <Route path="/admin/services" element={<ProtectedRoute allowedRole="admin"><Services /></ProtectedRoute>} />
         <Route path="/admin/service-types" element={<ProtectedRoute allowedRole="admin"><ServiceTypes /></ProtectedRoute>} />
+        <Route path="/admin/bookings" element={<ProtectedRoute allowedRole="admin"><Bookings /></ProtectedRoute>} />
 
         {/* User Routes */}
         <Route path="/profile" element={<ProtectedRoute allowedRole="user"><Profile /></ProtectedRoute>} />
@@ -67,6 +70,7 @@ function App() {
         <Route path="/technician-register" element={<ProtectedRoute allowedRole="user"><TechnicianRegister /></ProtectedRoute>} />
         <Route path="/technician-home" element={<ProtectedRoute allowedRole="technician"><TechnicianHome /></ProtectedRoute>} />
         <Route path="/technician-profile" element={<ProtectedRoute allowedRole="technician"><TechnicianProfile /></ProtectedRoute>} /> {/* Added new route */}
+        <Route path="/technician-bookings" element={<ProtectedRoute allowedRole="technician"><TechnicianBookings /></ProtectedRoute>} />        
 
         {/* Redirect unknown routes to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />

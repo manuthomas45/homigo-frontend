@@ -113,18 +113,18 @@ const BookingPage = () => {
 
         <div className="relative container mx-auto px-4">
           {/* Page Header */}
-          <div className={`text-center mb-12 space-y-4 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-            <div className="space-y-2">
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
-                Book Your
-                <span className="text-blue-500"> Service</span>
-              </h1>
-              <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-sky-400 rounded-full mx-auto"></div>
-            </div>
-            <p className="text-lg text-gray-600 leading-relaxed font-light max-w-2xl mx-auto">
-              Complete your booking details and proceed to secure payment
-            </p>
-          </div>
+          {/* <div className={`text-center mb-12 space-y-4 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}> */}
+            {/* <div className="space-y-2"> */}
+              {/* <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight"> */}
+                {/* Book Your */}
+                {/* <span className="text-blue-500"> Service</span> */}
+              {/* </h1> */}
+              {/* <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-sky-400 rounded-full mx-auto"></div> */}
+            {/* </div> */}
+            {/* <p className="text-lg text-gray-600 leading-relaxed font-light max-w-2xl mx-auto"> */}
+              {/* Complete your booking details and proceed to secure payment */}
+            {/* </p> */}
+          {/* </div> */}
 
           {/* Main Booking Card */}
           <div className={`${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`} style={{ animationDelay: '0.2s' }}>

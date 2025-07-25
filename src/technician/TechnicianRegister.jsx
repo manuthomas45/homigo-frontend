@@ -7,6 +7,7 @@ import api from '../api';
 import Navbar from '../user/Home/Navbar';
 
 
+
 const TechnicianRegister = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -79,9 +80,9 @@ const TechnicianRegister = () => {
             const response = await api.post('/technician/technician-register/', formDataToSend, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-            dispatch(setUser(response.data.user));
-            toast.success('Successfully registered as a technician!');
             navigate('/login');
+            dispatch(setUser({ ...response.data.user, role: 'technician' }));
+            toast.success('Successfully registered as a technician!');
         } catch (error) {
             const errorData = error.response?.data;
             if (errorData && !errorData.success) {

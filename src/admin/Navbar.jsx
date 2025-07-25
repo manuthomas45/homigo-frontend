@@ -100,7 +100,7 @@ const NavbarSidebar = () => {
               <SidebarItem icon={<UserHardHat size={18} />} text="Technicians" to="/admin/technicians" />
               <SidebarItem icon={<Users size={18} />} text="Customers" to="/admin/customers" />
               <SidebarItem icon={<FaWrench size={18} />} text="Services" to="/admin/service-types" />
-              <SidebarItem icon={<CheckSquare size={18} />} text="Tasks" to="/admin/tasks" />
+              <SidebarItem icon={<CheckSquare size={18} />} text="Bookings" to="/admin/bookings" />
               <SidebarItem icon={<Inbox size={18} />} text="Inbox" to="/admin/inbox" />
               <SidebarItem icon={<Wallet size={18} />} text="Wallet" to="/admin/wallet" />
               <SidebarItem icon={<BarChart3 size={18} />} text="Reports" to="/admin/reports" />

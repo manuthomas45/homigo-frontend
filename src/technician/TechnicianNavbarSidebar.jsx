@@ -7,6 +7,7 @@ import {
   LogOut,
   Menu,
   X,
+  Calendar, // ✅ Add this import
   User, // Added User icon for Profile
 } from "lucide-react";
 import { Link, useNavigate } from 'react-router-dom';
@@ -87,6 +88,7 @@ const TechnicianNavbarSidebar = ({ children }) => {
               <ul className="space-y-1 px-3">
                 <SidebarItem icon={<LayoutDashboard size={18} />} text="Dashboard" to="/technician-home" active />
                 <SidebarItem icon={<User size={18} />} text="Profile" to="/technician-profile" /> {/* Added Profile option */}
+                <SidebarItem icon={<Calendar size={18} />} text="Bookings" to="/technician-bookings" /> {/* ✅ Add this */}
                 <SidebarItem icon={<Briefcase size={18} />} text="Services" to="/technician-home/services" />
                 <SidebarItem icon={<Inbox size={18} />} text="Chats" to="/technician-home/chats" />
                 <SidebarItem icon={<Wallet size={18} />} text="Wallet" to="/technician-home/wallet" />
