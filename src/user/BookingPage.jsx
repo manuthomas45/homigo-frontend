@@ -170,7 +170,7 @@ const BookingPage = () => {
                   )}
                 </div>
               </div>
-
+              <button>address</button>
               {/* Date Selection */}
               <div className="mb-8">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Select Service Date</h3>
