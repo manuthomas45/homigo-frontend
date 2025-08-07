@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate,useNavigationType} from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
@@ -7,7 +7,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Navbar from './Home/Navbar';
 import api from '../api';
 
+
 const BookingPage = () => {
+  const location = useLocation(); // ✅ change here
   const { state } = useLocation();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
@@ -17,27 +19,28 @@ const BookingPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const serviceType = state?.serviceType;
   const categoryName = state?.categoryName;
+  const navigationType = useNavigationType();
+
 
   console.log(user);
   console.log(user?.id);
 
-  useEffect(() => {
-    const fetchUserAddress = async () => {
-      try {
-        const response = await api.get(`/users/addresses/`);
-        console.log(response.data);
-        console.log('hai');
-        const addresses = response.data || [];
-        console.log(addresses);
-        const defaultAddress = addresses.find((a) => a.is_default);
-        setAddress(defaultAddress || addresses[0]);
-      } catch (error) {
-        toast.error('Failed to load user address');
-        setAddress(null);
-      }
-    };
-    if (user?.id) fetchUserAddress();
-  }, [user?.id]);
+  const fetchUserAddress = async () => {
+    try {
+      const response = await api.get(`/users/addresses/`);
+      const addresses = response.data || [];
+      const defaultAddress = addresses.find((a) => a.is_default);
+      setAddress(defaultAddress || addresses[0]);
+    } catch (error) {
+      toast.error('Failed to load user address');
+      setAddress(null);
+    }
+  };
+
+useEffect(() => {
+  fetchUserAddress();
+}, [location.key]);
+
 
   if (!serviceType) {
     navigate('/services');
@@ -159,18 +162,21 @@ const BookingPage = () => {
                       <p><strong>State:</strong> {address.state}</p>
                       <p><strong>Pincode:</strong> {address.pincode}</p>
                       <p><strong>Phone:</strong> {address.phone_number}</p>
+                      <button onClick={()=>navigate('/profile')}>Change Address</button>
                     </div>
+                    
                   ) : (
                     <div className="flex items-center space-x-3 text-amber-600">
                       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                       <p>No address available. Please update your profile.</p>
+                      <button onClick={()=>navigate('/profile')}>Add Address</button>
                     </div>
                   )}
                 </div>
               </div>
-              <button>address</button>
+              
               {/* Date Selection */}
               <div className="mb-8">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Select Service Date</h3>
