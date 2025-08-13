@@ -91,7 +91,7 @@ const TechnicianNavbarSidebar = ({ children }) => {
                 <SidebarItem icon={<Calendar size={18} />} text="Bookings" to="/technician-bookings" /> {/* ✅ Add this */}
                 <SidebarItem icon={<Briefcase size={18} />} text="Services" to="/technician-home/services" />
                 <SidebarItem icon={<Inbox size={18} />} text="Chats" to="/technician-home/chats" />
-                <SidebarItem icon={<Wallet size={18} />} text="Wallet" to="/technician-home/wallet" />
+                <SidebarItem icon={<Wallet size={18} />} text="Wallet" to="/technician-wallet" />
               </ul>
             </div>
             <div className="p-4 border-t border-gray-200 mt-auto">
