@@ -53,6 +53,9 @@ const Navbar = () => {
                         <Link to="/technician-register" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                             Login as Technician
                         </Link>
+                        <Link to="/user-bookings" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+                            booking
+                        </Link>
                         <Link to="/profile" className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                             <span className="text-xl">👤</span>
                             <span>{user?.firstName || 'Profile'}</span>
@@ -105,6 +108,13 @@ const Navbar = () => {
                                 onClick={toggleMenu}
                             >
                                 Login as Technician
+                            </Link>
+                            <Link
+                                to="/user-bookings"
+                                className="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium"
+                                onClick={toggleMenu}
+                            >
+                                bookings
                             </Link>
                             <Link
                                 to="/profile"

@@ -27,6 +27,7 @@ import Bookings from './admin/Bookings';
 import TechnicianBookings from './technician/TechnicianBooking';
 import TechnicianWallet from './technician/TechnicianWallet';
 import AdminWallet from './admin/AdminWallet';
+import UserBookings from './user/UserBookings';
 function App() {
   const dispatch = useDispatch();
 
@@ -67,6 +68,7 @@ function App() {
 
         {/* User Routes */}
         <Route path="/profile" element={<ProtectedRoute allowedRole="user"><Profile /></ProtectedRoute>} />
+        <Route path="/user-bookings" element={<ProtectedRoute allowedRole="user"><UserBookings /></ProtectedRoute>} />
 
         {/* Technician Routes */}
         <Route path="/technician-register" element={<ProtectedRoute allowedRole="user"><TechnicianRegister /></ProtectedRoute>} />
