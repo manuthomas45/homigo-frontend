@@ -293,7 +293,7 @@ const BookingSuccess = () => {
                   Book Another Service
                 </button>
                 <button
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate('/user-bookings')}
                   className="flex-1 group bg-blue-500 text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue-600 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-blue-500/25"
                 >
                   <span className="flex items-center justify-center">

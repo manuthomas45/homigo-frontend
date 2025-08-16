@@ -2,22 +2,38 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './Home/Navbar';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
-import { CalendarIcon, MapPinIcon, CurrencyDollarIcon, UserIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { CalendarIcon, MapPinIcon, CurrencyDollarIcon, UserIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  Snackbar,
+  Alert,
+} from '@mui/material';
 
 const UserBookings = () => {
   const [bookings, setBookings] = useState([]);
+  const [walletBalance, setWalletBalance] = useState('0.00');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [toastOpen, setToastOpen] = useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [cancelBookingId, setCancelBookingId] = useState(null);
+  const [activeTab, setActiveTab] = useState('booked');
   const navigate = useNavigate();
 
-  // Fetch bookings on mount
+  // Fetch bookings and wallet balance on mount
   useEffect(() => {
     const fetchBookings = async () => {
       try {
         const response = await api.get('bookings/user/');
-        setBookings(response.data);
+        setBookings(response.data.bookings);
+        setWalletBalance(response.data.wallet_balance || '0.00');
+        console.log(response.data);
         setLoading(false);
       } catch (err) {
         setError('Failed to load bookings. Please try again.');
@@ -30,30 +46,45 @@ const UserBookings = () => {
     fetchBookings();
   }, [navigate]);
 
+  // Handle opening the cancel confirmation dialog
+  const handleOpenCancelDialog = (bookingId) => {
+    setCancelBookingId(bookingId);
+    setCancelDialogOpen(true);
+  };
+
+  // Handle closing the cancel dialog
+  const handleCloseCancelDialog = () => {
+    setCancelDialogOpen(false);
+    setCancelBookingId(null);
+  };
+
   // Handle booking cancellation
-  const handleCancelBooking = async (bookingId) => {
-    if (window.confirm('Are you sure you want to cancel this booking?')) {
-      try {
-        setLoading(true);
-        const response = await api.post(`bookings/${bookingId}/cancel/`);
-        setMessage(response.data.message);
-        setBookings((prevBookings) =>
-          prevBookings.map((booking) =>
-            booking.id === bookingId ? { ...booking, status: 'cancelled' } : booking
-          )
-        );
-        setLoading(false);
-      } catch (err) {
-        setError(err.response?.data?.error || 'Failed to cancel booking.');
-        setLoading(false);
-      }
+  const handleCancelBooking = async () => {
+    try {
+      setLoading(true);
+      const response = await api.post(`bookings/${cancelBookingId}/cancel/`);
+      setMessage(response.data.message);
+      setToastOpen(true);
+      // Refetch bookings and wallet balance
+      const fetchResponse = await api.get('bookings/user/');
+      setBookings(fetchResponse.data.bookings);
+      setWalletBalance(fetchResponse.data.wallet_balance || '0.00');
+      setLoading(false);
+      handleCloseCancelDialog();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to cancel booking.');
+      setToastOpen(true);
+      setLoading(false);
+      handleCloseCancelDialog();
     }
   };
 
-  // Filter bookings by status
-  const filteredBookings = filterStatus === 'all'
-    ? bookings
-    : bookings.filter((booking) => booking.status.toLowerCase() === filterStatus);
+  // Handle closing the toast
+  const handleCloseToast = () => {
+    setToastOpen(false);
+    setMessage(null);
+    setError(null);
+  };
 
   // Status color mapping
   const getStatusStyles = (status) => {
@@ -73,6 +104,115 @@ const UserBookings = () => {
     }
   };
 
+  // Filter and sort bookings
+  const bookedBookings = bookings.filter((booking) => booking.status.toLowerCase() === 'booked');
+  const confirmedAndCompletedBookings = bookings
+    .filter((booking) => ['confirmed', 'completed'].includes(booking.status.toLowerCase()))
+    .sort((a, b) => {
+      if (a.status.toLowerCase() === 'confirmed' && b.status.toLowerCase() === 'completed') return -1;
+      if (a.status.toLowerCase() === 'completed' && b.status.toLowerCase() === 'confirmed') return 1;
+      return 0;
+    });
+  const cancelledBookings = bookings.filter((booking) => booking.status.toLowerCase() === 'cancelled');
+
+  // Render individual booking card
+  const renderBookingCard = (booking) => (
+    <div
+      key={booking.id}
+      className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+    >
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        Booking #{booking.id}
+      </h2>
+      <div className="space-y-3">
+        <p className="flex items-center">
+          <UserIcon className="h-5 w-5 text-gray-500 mr-2" />
+          <span>
+            <strong>Service:</strong>{' '}
+            {booking.service_type?.name || 'N/A'} (
+            {booking.category?.name || 'N/A'})
+          </span>
+        </p>
+        <p className="flex items-center">
+          <MapPinIcon className="h-5 w-5 text-gray-500 mr-2" />
+          <span>
+            <strong>Address:</strong>{' '}
+            {booking.address?.address || 'N/A'},{' '}
+            {booking.address?.city || 'N/A'},{' '}
+            {booking.address?.state || 'N/A'}{' '}
+            {booking.address?.pincode || 'N/A'}
+          </span>
+        </p>
+        <p className="flex items-center">
+          <span
+            className={`inline-block px-2 py-1 rounded-full text-sm font-medium ${getStatusStyles(booking.status)}`}
+          >
+            <strong>Status:</strong> {booking.status || 'N/A'}
+          </span>
+        </p>
+        <p className="flex items-center">
+          <CurrencyDollarIcon className="h-5 w-5 text-gray-500 mr-2" />
+          <span>
+            <strong>Amount:</strong> ${booking.amount || '0.00'}
+          </span>
+        </p>
+        <p className="flex items-center">
+          <CalendarIcon className="h-5 w-5 text-gray-500 mr-2" />
+          <span>
+            <strong>Date:</strong>{' '}
+            {booking.booking_date
+              ? new Date(booking.booking_date).toLocaleDateString('en-IN', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                })
+              : 'N/A'}
+          </span>
+        </p>
+        {booking.technician && booking.technician.user ? (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <p className="flex items-center">
+              <UserIcon className="h-5 w-5 text-gray-500 mr-2" />
+              <span>
+                <strong>Technician:</strong>{' '}
+                {booking.technician.user.firstName}{' '}
+                {booking.technician.user.lastName}
+              </span>
+            </p>
+            <p>
+              <strong>Email:</strong>{' '}
+              {booking.technician.user.email || 'N/A'}
+            </p>
+            <p>
+              <strong>Phone:</strong>{' '}
+              {booking.technician.user.phoneNumber || 'N/A'}
+            </p>
+            <p>
+              <strong>City:</strong>{' '}
+              {booking.technician.city || 'N/A'}
+            </p>
+          </div>
+        ) : (
+          <p className="text-gray-500 italic">
+            No technician assigned yet.
+          </p>
+        )}
+      </div>
+      {!booking.technician &&
+        booking.status &&
+        !['cancelled', 'completed'].includes(booking.status) && (
+          <button
+            onClick={() => handleOpenCancelDialog(booking.id)}
+            className="mt-4 flex items-center bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition disabled:bg-red-300"
+            disabled={loading}
+          >
+            <XCircleIcon className="h-5 w-5 mr-2" />
+            Cancel Booking
+          </button>
+        )}
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="pt-20 max-w-7xl mx-auto p-4">
@@ -87,7 +227,7 @@ const UserBookings = () => {
     );
   }
 
-  if (error) {
+  if (error && !toastOpen) {
     return (
       <div className="pt-20 max-w-7xl mx-auto p-4 text-center">
         <div className="bg-red-100 text-red-700 p-4 rounded-lg">
@@ -101,139 +241,147 @@ const UserBookings = () => {
     <>
       <Navbar />
       <div className="pt-20 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Your Bookings</h1>
-          <div className="flex items-center space-x-4">
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500"
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">Your Bookings</h1>
+
+        {/* Toast Notification */}
+        <Snackbar
+          open={toastOpen}
+          autoHideDuration={6000}
+          onClose={handleCloseToast}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert
+            onClose={handleCloseToast}
+            severity={error ? 'error' : 'success'}
+            sx={{ width: '100%' }}
+          >
+            {error || message}
+          </Alert>
+        </Snackbar>
+
+        {/* Confirmation Dialog */}
+        <Dialog
+          open={cancelDialogOpen}
+          onClose={handleCloseCancelDialog}
+          aria-labelledby="cancel-booking-dialog-title"
+          aria-describedby="cancel-booking-dialog-description"
+        >
+          <DialogTitle id="cancel-booking-dialog-title">Confirm Cancellation</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="cancel-booking-dialog-description">
+              Are you sure you want to cancel this booking? The booking amount will be refunded to your wallet.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleCloseCancelDialog}
+              sx={{ color: '#6b7280' }}
             >
-              <option value="all">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="booked">Booked</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCancelBooking}
+              variant="contained"
+              sx={{ backgroundColor: '#dc2626', '&:hover': { backgroundColor: '#b91c1c' } }}
+              autoFocus
+            >
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Tabs */}
+        <div className="flex space-x-4 mb-6 border-b border-gray-200">
+          <button
+            onClick={() => setActiveTab('booked')}
+            className={`px-4 py-2 text-sm font-medium ${
+              activeTab === 'booked'
+                ? 'border-b-2 border-blue-600 text-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Booked
+          </button>
+          <button
+            onClick={() => setActiveTab('confirmedAndCompleted')}
+            className={`px-4 py-2 text-sm font-medium ${
+              activeTab === 'confirmedAndCompleted'
+                ? 'border-b-2 border-blue-600 text-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Confirmed & Completed
+          </button>
+          <button
+            onClick={() => setActiveTab('cancelled')}
+            className={`px-4 py-2 text-sm font-medium ${
+              activeTab === 'cancelled'
+                ? 'border-b-2 border-blue-600 text-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Cancelled
+          </button>
         </div>
 
-        {message && (
-          <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-lg flex items-center animate-fade-in">
-            <CheckCircleIcon className="h-5 w-5 mr-2" />
-            {message}
+        {/* Booked Section */}
+        {activeTab === 'booked' && (
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Booked Bookings</h2>
+            {bookedBookings.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-lg shadow">
+                <p className="text-gray-600 mb-4">No booked bookings found.</p>
+                <button
+                  onClick={() => navigate('/services')}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
+                >
+                  Book a Service Now
+                </button>
+              </div>
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {bookedBookings.map(renderBookingCard)}
+              </div>
+            )}
           </div>
         )}
 
-        {filteredBookings.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow">
-            <p className="text-gray-600 mb-4">No bookings found for the selected status.</p>
-            <button
-              onClick={() => navigate('/services')}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
-            >
-              Book a Service Now
-            </button>
-          </div>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {filteredBookings.map((booking) => (
-              <div
-                key={booking.id}
-                className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
-              >
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Booking #{booking.id}
-                </h2>
-                <div className="space-y-3">
-                  <p className="flex items-center">
-                    <UserIcon className="h-5 w-5 text-gray-500 mr-2" />
-                    <span>
-                      <strong>Service:</strong>{' '}
-                      {booking.service_type?.name || 'N/A'} (
-                      {booking.category?.name || 'N/A'})
-                    </span>
-                  </p>
-                  <p className="flex items-center">
-                    <MapPinIcon className="h-5 w-5 text-gray-500 mr-2" />
-                    <span>
-                      <strong>Address:</strong>{' '}
-                      {booking.address?.address || 'N/A'},{' '}
-                      {booking.address?.city || 'N/A'},{' '}
-                      {booking.address?.state || 'N/A'}{' '}
-                      {booking.address?.pincode || 'N/A'}
-                    </span>
-                  </p>
-                  <p className="flex items-center">
-                    <span
-                      className={`inline-block px-2 py-1 rounded-full text-sm font-medium ${getStatusStyles(booking.status)}`}
-                    >
-                      <strong>Status:</strong> {booking.status || 'N/A'}
-                    </span>
-                  </p>
-                  <p className="flex items-center">
-                    <CurrencyDollarIcon className="h-5 w-5 text-gray-500 mr-2" />
-                    <span>
-                      <strong>Amount:</strong> ${booking.amount || '0.00'}
-                    </span>
-                  </p>
-                  <p className="flex items-center">
-                    <CalendarIcon className="h-5 w-5 text-gray-500 mr-2" />
-                    <span>
-                      <strong>Date:</strong>{' '}
-                      {booking.booking_date
-                        ? new Date(booking.booking_date).toLocaleDateString("en-IN", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric"
-                        })
-                        : 'N/A'}
-                    </span>
-                  </p>
-                  {booking.technician && booking.technician.user ? (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <p className="flex items-center">
-                        <UserIcon className="h-5 w-5 text-gray-500 mr-2" />
-                        <span>
-                          <strong>Technician:</strong>{' '}
-                          {booking.technician.user.firstName}{' '}
-                          {booking.technician.user.lastName}
-                        </span>
-                      </p>
-                      <p>
-                        <strong>Email:</strong>{' '}
-                        {booking.technician.user.email || 'N/A'}
-                      </p>
-                      <p>
-                        <strong>Phone:</strong>{' '}
-                        {booking.technician.user.phoneNumber || 'N/A'}
-                      </p>
-                      <p>
-                        <strong>City:</strong>{' '}
-                        {booking.technician.city || 'N/A'}
-                      </p>
-                    </div>
-                  ) : (
-                    <p className="text-gray-500 italic">
-                      No technician assigned yet.
-                    </p>
-                  )}
-                </div>
-                {!booking.technician &&
-                  booking.status &&
-                  !['cancelled', 'completed'].includes(booking.status) && (
-                    <button
-                      onClick={() => handleCancelBooking(booking.id)}
-                      className="mt-4 flex items-center bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition disabled:bg-red-300"
-                      disabled={loading}
-                    >
-                      <XCircleIcon className="h-5 w-5 mr-2" />
-                      Cancel Booking
-                    </button>
-                  )}
+        {/* Confirmed & Completed Section */}
+        {activeTab === 'confirmedAndCompleted' && (
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Confirmed & Completed Bookings</h2>
+            {confirmedAndCompletedBookings.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-lg shadow">
+                <p className="text-gray-600 mb-4">No confirmed or completed bookings found.</p>
               </div>
-            ))}
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {confirmedAndCompletedBookings.map(renderBookingCard)}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Cancelled Section */}
+        {activeTab === 'cancelled' && (
+          <div>
+            {/* Wallet Balance Display */}
+            <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-lg flex items-center">
+              <CurrencyDollarIcon className="h-6 w-6 mr-2" />
+              <span className="text-lg font-semibold">
+                Wallet Balance: ${walletBalance}
+              </span>
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Cancelled Bookings</h2>
+            {cancelledBookings.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-lg shadow">
+                <p className="text-gray-600 mb-4">No cancelled bookings found.</p>
+              </div>
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {cancelledBookings.map(renderBookingCard)}
+              </div>
+            )}
           </div>
         )}
       </div>
