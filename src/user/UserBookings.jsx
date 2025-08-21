@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './Home/Navbar';
+import Navbar from './Home/Navbar'
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
 import { CalendarIcon, MapPinIcon, CurrencyDollarIcon, UserIcon, XCircleIcon } from '@heroicons/react/24/outline';
@@ -12,6 +12,7 @@ import {
   Button,
   Snackbar,
   Alert,
+  TextField,
 } from '@mui/material';
 
 const UserBookings = () => {
@@ -23,6 +24,10 @@ const UserBookings = () => {
   const [toastOpen, setToastOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelBookingId, setCancelBookingId] = useState(null);
+  const [complaintDialogOpen, setComplaintDialogOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [complaintTitle, setComplaintTitle] = useState('');
+  const [complaintDescription, setComplaintDescription] = useState('');
   const [activeTab, setActiveTab] = useState('booked');
   const navigate = useNavigate();
 
@@ -76,6 +81,41 @@ const UserBookings = () => {
       setToastOpen(true);
       setLoading(false);
       handleCloseCancelDialog();
+    }
+  };
+
+  // Handle opening the complaint dialog
+  const handleOpenComplaintDialog = (booking) => {
+    setSelectedBooking(booking);
+    setComplaintTitle('');
+    setComplaintDescription('');
+    setComplaintDialogOpen(true);
+  };
+
+  // Handle closing the complaint dialog
+  const handleCloseComplaintDialog = () => {
+    setComplaintDialogOpen(false);
+    setSelectedBooking(null);
+  };
+
+  // Handle submitting the complaint
+  const handleSubmitComplaint = async () => {
+    try {
+      setLoading(true);
+      const data = {
+        booking: selectedBooking.id,
+        title: complaintTitle,
+        description: complaintDescription,
+      };
+      const response = await api.post('bookings/complaints/', data);
+      setMessage(response.data.message);
+      setToastOpen(true);
+      setLoading(false);
+      handleCloseComplaintDialog();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to submit complaint.');
+      setToastOpen(true);
+      setLoading(false);
     }
   };
 
@@ -210,6 +250,14 @@ const UserBookings = () => {
             Cancel Booking
           </button>
         )}
+      {booking.status.toLowerCase() === 'completed' && (
+        <button
+          onClick={() => handleOpenComplaintDialog(booking)}
+          className="mt-4 flex items-center bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition"
+        >
+          Give Complaint
+        </button>
+      )}
     </div>
   );
 
@@ -286,6 +334,61 @@ const UserBookings = () => {
               autoFocus
             >
               Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Complaint Dialog */}
+        <Dialog
+          open={complaintDialogOpen}
+          onClose={handleCloseComplaintDialog}
+          aria-labelledby="complaint-dialog-title"
+          aria-describedby="complaint-dialog-description"
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle id="complaint-dialog-title">Submit Complaint</DialogTitle>
+          <DialogContent>
+            {selectedBooking && (
+              <div>
+                {/* <p><strong>User:</strong> {selectedBooking.user?.firstName || 'N/A'} {selectedBooking.user?.lastName || 'N/A'} ({selectedBooking.user?.email || 'N/A'})</p> */}
+                <p><strong>Technician:</strong> {selectedBooking.technician?.user?.firstName || 'N/A'} {selectedBooking.technician?.user?.lastName || 'N/A'} ({selectedBooking.technician?.user?.email || 'N/A'}, {selectedBooking.technician?.user?.phoneNumber || 'N/A'}, {selectedBooking.technician?.city || 'N/A'})</p>
+                <p><strong>Service:</strong> {selectedBooking.service_type?.name || 'N/A'} ({selectedBooking.category?.name || 'N/A'})</p>
+                <TextField
+                  label="Complaint Title"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={complaintTitle}
+                  onChange={(e) => setComplaintTitle(e.target.value)}
+                />
+                <TextField
+                  label="Complaint Description"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  multiline
+                  rows={4}
+                  value={complaintDescription}
+                  onChange={(e) => setComplaintDescription(e.target.value)}
+                />
+              </div>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleCloseComplaintDialog}
+              sx={{ color: '#6b7280' }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmitComplaint}
+              variant="contained"
+              sx={{ backgroundColor: '#f59e0b', '&:hover': { backgroundColor: '#d97706' } }}
+              autoFocus
+            >
+              Submit
             </Button>
           </DialogActions>
         </Dialog>
