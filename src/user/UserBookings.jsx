@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './Home/Navbar'
+import Navbar from './Home/Navbar';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
-import { CalendarIcon, MapPinIcon, CurrencyDollarIcon, UserIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { CalendarIcon, MapPinIcon, CurrencyDollarIcon, UserIcon, XCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
 import {
   Dialog,
   DialogTitle,
@@ -28,6 +28,7 @@ const UserBookings = () => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [complaintTitle, setComplaintTitle] = useState('');
   const [complaintDescription, setComplaintDescription] = useState('');
+  const [complaintImage, setComplaintImage] = useState(null);
   const [activeTab, setActiveTab] = useState('booked');
   const navigate = useNavigate();
 
@@ -89,6 +90,7 @@ const UserBookings = () => {
     setSelectedBooking(booking);
     setComplaintTitle('');
     setComplaintDescription('');
+    setComplaintImage(null);
     setComplaintDialogOpen(true);
   };
 
@@ -96,18 +98,59 @@ const UserBookings = () => {
   const handleCloseComplaintDialog = () => {
     setComplaintDialogOpen(false);
     setSelectedBooking(null);
+    setComplaintTitle('');
+    setComplaintDescription('');
+    setComplaintImage(null);
+  };
+
+  // Handle image selection
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setComplaintImage(file);
+    }
+  };
+
+  // Validate complaint inputs
+  const validateComplaint = () => {
+    const errors = [];
+    const titleWords = complaintTitle.trim().split(/\s+/).filter(word => word.length > 0);
+    const descriptionWords = complaintDescription.trim().split(/\s+/).filter(word => word.length > 0);
+
+    if (titleWords.length < 2) {
+      errors.push('Title must have at least 2 words.');
+    }
+    if (descriptionWords.length < 5) {
+      errors.push('Description must have at least 5 words.');
+    }
+    if (!complaintImage) {
+      errors.push('Image is required.');
+    }
+
+    return errors;
   };
 
   // Handle submitting the complaint
   const handleSubmitComplaint = async () => {
+    // Validate inputs
+    const errors = validateComplaint();
+    if (errors.length > 0) {
+      setError(errors.join(' '));
+      setToastOpen(true);
+      return;
+    }
+
     try {
       setLoading(true);
-      const data = {
-        booking: selectedBooking.id,
-        title: complaintTitle,
-        description: complaintDescription,
-      };
-      const response = await api.post('bookings/complaints/', data);
+      const formData = new FormData();
+      formData.append('booking', selectedBooking.id);
+      formData.append('title', complaintTitle);
+      formData.append('description', complaintDescription);
+      formData.append('image', complaintImage);
+
+      const response = await api.post('bookings/complaints/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       setMessage(response.data.message);
       setToastOpen(true);
       setLoading(false);
@@ -258,6 +301,15 @@ const UserBookings = () => {
           Give Complaint
         </button>
       )}
+      {booking.status.toLowerCase() === 'confirmed' && (
+        <button
+          onClick={() => navigate('/user-chat', { state: { bookingId: boarding.id } })}
+          className="mt-4 flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+        >
+          <ChatBubbleLeftIcon className="h-5 w-5 mr-2" />
+          Go to Chat
+        </button>
+      )}
     </div>
   );
 
@@ -351,7 +403,6 @@ const UserBookings = () => {
           <DialogContent>
             {selectedBooking && (
               <div>
-                {/* <p><strong>User:</strong> {selectedBooking.user?.firstName || 'N/A'} {selectedBooking.user?.lastName || 'N/A'} ({selectedBooking.user?.email || 'N/A'})</p> */}
                 <p><strong>Technician:</strong> {selectedBooking.technician?.user?.firstName || 'N/A'} {selectedBooking.technician?.user?.lastName || 'N/A'} ({selectedBooking.technician?.user?.email || 'N/A'}, {selectedBooking.technician?.user?.phoneNumber || 'N/A'}, {selectedBooking.technician?.city || 'N/A'})</p>
                 <p><strong>Service:</strong> {selectedBooking.service_type?.name || 'N/A'} ({selectedBooking.category?.name || 'N/A'})</p>
                 <TextField
@@ -361,6 +412,9 @@ const UserBookings = () => {
                   margin="normal"
                   value={complaintTitle}
                   onChange={(e) => setComplaintTitle(e.target.value)}
+                  required
+                  error={toastOpen && complaintTitle.trim().split(/\s+/).filter(word => word.length > 0).length < 2}
+                  helperText={toastOpen && complaintTitle.trim().split(/\s+/).filter(word => word.length > 0).length < 2 ? 'Title must have at least 2 words' : ''}
                 />
                 <TextField
                   label="Complaint Description"
@@ -371,7 +425,20 @@ const UserBookings = () => {
                   rows={4}
                   value={complaintDescription}
                   onChange={(e) => setComplaintDescription(e.target.value)}
+                  required
+                  error={toastOpen && complaintDescription.trim().split(/\s+/).filter(word => word.length > 0).length < 5}
+                  helperText={toastOpen && complaintDescription.trim().split(/\s+/).filter(word => word.length > 0).length < 5 ? 'Description must have at least 5 words' : ''}
                 />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="mt-4"
+                  required
+                />
+                {toastOpen && !complaintImage && (
+                  <p className="text-red-600 text-sm mt-2">Image is required</p>
+                )}
               </div>
             )}
           </DialogContent>
@@ -387,6 +454,7 @@ const UserBookings = () => {
               variant="contained"
               sx={{ backgroundColor: '#f59e0b', '&:hover': { backgroundColor: '#d97706' } }}
               autoFocus
+              disabled={loading}
             >
               Submit
             </Button>

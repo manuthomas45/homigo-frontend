@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   X,
+  MessageSquareWarning, 
 } from "lucide-react"
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -94,7 +95,7 @@ const NavbarSidebar = () => {
       >
         <div className="flex flex-col h-full">
           <div className="flex-1 py-24">
-            <ul className="space-y-1 px-3">
+            <ul className="space-y-1 px-3 pt-16">
               <SidebarItem icon={<LayoutDashboard size={18} />} text="Dashboard" to="/admin" />
               <SidebarItem icon={<Briefcase size={18} />} text="Category" to="/admin/services" />
               <SidebarItem icon={<UserHardHat size={18} />} text="Technicians" to="/admin/technicians" />
@@ -102,6 +103,7 @@ const NavbarSidebar = () => {
               <SidebarItem icon={<FaWrench size={18} />} text="Services" to="/admin/service-types" />
               <SidebarItem icon={<CheckSquare size={18} />} text="Bookings" to="/admin/bookings" />
               <SidebarItem icon={<Inbox size={18} />} text="Inbox" to="/admin/inbox" />
+              <SidebarItem icon={<MessageSquareWarning size={18} />} text="Complaints" to="/admin/complaints" />
               <SidebarItem icon={<Wallet size={18} />} text="Wallet" to="/admin/wallet" />
               <SidebarItem icon={<BarChart3 size={18} />} text="Reports" to="/admin/reports" />
             </ul>

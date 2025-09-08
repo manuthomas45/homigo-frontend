@@ -29,6 +29,10 @@ import TechnicianWallet from './technician/TechnicianWallet';
 import AdminWallet from './admin/AdminWallet';
 import UserBookings from './user/UserBookings';
 import UserWallet from './user/UserWallet';
+import Chat from './user/Chat';
+import Complaints from './admin/Complaints';
+import NotFoundPage from './user/NotFound';
+
 function App() {
   const dispatch = useDispatch();
 
@@ -57,6 +61,8 @@ function App() {
         <Route path="/services" element={<ServicePage/>}/>
         <Route path="/booking" element={<BookingPage/>} />
         <Route path="/booking-success" element={<BookingSuccess />} />
+        <Route path="/booking-success" element={<BookingSuccess />} />
+        <Route path="/not-found" element={<NotFoundPage />} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute allowedRole="admin"><AdminDashboard /></ProtectedRoute>} />
@@ -66,11 +72,13 @@ function App() {
         <Route path="/admin/service-types" element={<ProtectedRoute allowedRole="admin"><ServiceTypes /></ProtectedRoute>} />
         <Route path="/admin/bookings" element={<ProtectedRoute allowedRole="admin"><Bookings /></ProtectedRoute>} />
         <Route path="/admin/wallet" element={<ProtectedRoute allowedRole="admin"><AdminWallet /></ProtectedRoute>} />
+        <Route path="/admin/complaints" element={<ProtectedRoute allowedRole="admin">< Complaints/></ProtectedRoute>} />
 
         {/* User Routes */}
         <Route path="/profile" element={<ProtectedRoute allowedRole="user"><Profile /></ProtectedRoute>} />
         <Route path="/user-bookings" element={<ProtectedRoute allowedRole="user"><UserBookings /></ProtectedRoute>} />
         <Route path="/user-wallet" element={<ProtectedRoute allowedRole="user"><UserWallet /></ProtectedRoute>} />
+        <Route path="/user-chat" element={<ProtectedRoute allowedRole="user"><Chat/></ProtectedRoute>} />
 
         {/* Technician Routes */}
         <Route path="/technician-register" element={<ProtectedRoute allowedRole="user"><TechnicianRegister /></ProtectedRoute>} />
@@ -81,7 +89,7 @@ function App() {
         <Route path="/technician-wallet" element={<ProtectedRoute allowedRole="technician"><TechnicianWallet /></ProtectedRoute>} />        
 
         {/* Redirect unknown routes to login */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/not-found" replace />} />
       </Routes>
   );
 }
